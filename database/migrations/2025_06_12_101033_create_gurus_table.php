@@ -15,6 +15,7 @@ public function up(): void
         $table->id();
         $table->string('nama');
         $table->string('nip')->unique();
+        $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
         $table->timestamps();
     });
 }
