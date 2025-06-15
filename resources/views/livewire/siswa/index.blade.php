@@ -45,7 +45,7 @@
             @foreach ($kelasList as $kelas)
                 <button wire:click="filterByKelas({{ $kelas->id }})"
                     class="px-3 py-1 rounded {{ $filterKelasId == $kelas->id ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700' }}">
-                    {{ $kelas->nama }} ({{ $kelas->siswas_count }})
+                    {{ $kelas->nama }} 
 
                 </button>
             @endforeach
@@ -53,27 +53,55 @@
     </div>
 
 
-    <table class="w-full bg-white dark:bg-gray-800 rounded shadow text-left">
-        <thead>
-            <tr class="border-b dark:border-gray-700">
-                <th class="p-3">Nama</th>
-                <th class="p-3">NIS</th>
-                <th class="p-3">Kelas</th>
-                <th class="p-3">Aksi</th>
+  <table class="w-full bg-white dark:bg-gray-800 rounded shadow text-left">
+    <thead>
+        <tr class="border-b dark:border-gray-700">
+            <th class="px-3 py-2 border dark:border-gray-600">No.</th>
+            <th class="p-3">Kelas</th>
+            <th class="p-3">Nama Siswa</th>
+            <th class="p-3">NIS</th>
+            <th class="p-3">Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($kelasList as $index => $kelas)
+            <tr class="border-b dark:border-gray-700 align-top">
+                <td class="px-3 py-2 border dark:border-gray-600">{{ $index + 1 }}</td>
+                <td class="p-3 font-bold">{{ $kelas->nama }}</td>
+
+                <td class="p-3">
+                    @forelse ($kelas->siswas as $siswa)
+                        <div>{{ $siswa->nama }}</div>
+                    @empty
+                        <div>-</div>
+                    @endforelse
+                </td>
+
+                <td class="p-3">
+                    @forelse ($kelas->siswas as $siswa)
+                        <div>{{ $siswa->nis }}</div>
+                    @empty
+                        <div>-</div>
+                    @endforelse
+                </td>
+
+                <td class="p-3">
+                    @forelse ($kelas->siswas as $siswa)
+                        <div class="flex gap-1 mb-1">
+                            <button wire:click="edit({{ $siswa->id }})" class="text-blue-500 hover:underline">Edit</button>
+                            <button wire:click="delete({{ $siswa->id }})" class="text-red-500 hover:underline">Hapus</button>
+                        </div>
+                    @empty
+                        <div>-</div>
+                    @endforelse
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach ($siswas as $siswa)
-                <tr class="border-b dark:border-gray-700">
-                    <td class="p-3">{{ $siswa->nama }}</td>
-                    <td class="p-3">{{ $siswa->nis }}</td>
-                    <td class="p-3">{{ $siswa->kelas->nama ?? '-' }}</td>
-                    <td class="p-3">
-                        <button wire:click="edit({{ $siswa->id }})" class="text-blue-500 hover:underline mr-2">Edit</button>
-                        <button wire:click="delete({{ $siswa->id }})" class="text-red-500 hover:underline">Hapus</button>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        @empty
+            <tr>
+                <td colspan="4" class="p-3 text-center">Tidak ada data ditemukan</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
 </div>

@@ -14,18 +14,17 @@ class Index extends Component
     public $isEdit = false;
     public $filterKelasId = null;
 
-    public function render()
-    {
-        $kelasList = Kelas::withCount('siswas')->get();
+public function render()
+{
+    $kelasList = Kelas::with(['siswas'])
+        ->when($this->filterKelasId, function ($query) {
+            $query->where('id', $this->filterKelasId);
+        })
+        ->get();
 
-        $siswas = Siswa::with('kelas')
-            ->when($this->filterKelasId, fn($query) =>
-                $query->where('kelas_id', $this->filterKelasId)
-            )
-            ->get();
+    return view('livewire.siswa.index', compact('kelasList'));
+}
 
-        return view('livewire.siswa.index', compact('kelasList', 'siswas'));
-    }
 
     public function store()
     {

@@ -36,47 +36,73 @@
     </form>
 
 
-    <div class="mb-4 flex flex-wrap gap-2">
-        <button wire:click="setFilterKelas(null)" class="px-3 py-1 rounded bg-gray-500 text-white {{ $filterKelasId === null ? 'font-bold' : '' }}">
-            Semua Kelas
+<div class="mb-4 flex flex-wrap gap-2">
+    <button wire:click="setFilterKelas(null)"
+        class="px-3 py-1 rounded bg-gray-500 text-white {{ $filterKelasId === null ? 'font-bold' : '' }}">
+        Semua Kelas
+    </button>
+    @foreach($kelasList as $kelas)
+        <button wire:click="setFilterKelas({{ $kelas->id }})"
+            class="px-3 py-1 rounded bg-blue-600 text-white {{ $filterKelasId === $kelas->id ? 'font-bold' : '' }}">
+            {{ $kelas->nama }}
         </button>
-        @foreach($kelasList as $kelas)
-            <button wire:click="setFilterKelas({{ $kelas->id }})" class="px-3 py-1 rounded bg-blue-600 text-white {{ $filterKelasId === $kelas->id ? 'font-bold' : '' }}">
-                {{ $kelas->nama }}
-            </button>
-        @endforeach
-    </div>
-
-
-    <table class="w-full bg-white dark:bg-gray-800 rounded shadow text-left">
-        <thead>
-            <tr class="border-b dark:border-gray-700">
-                <th class="p-3">Nama</th>
-                <th class="p-3">NIP</th>
-                <th class="p-3">Kelas</th>
-                <th class="p-3">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach ($gurus as $guru)
-        <tr class="border-b dark:border-gray-700">
-            <td class="p-3">{{ $guru->nama }}</td>
-            <td class="p-3">{{ $guru->nip }}</td>
-            <td class="p-3">
-                @if ($guru->kelas->count())
-                    {{ $guru->kelas->pluck('nama')->join(', ') }}
-                @else
-                    -
-                @endif
-            </td>
-
-            <td class="p-3">
-                <button wire:click="edit({{ $guru->id }})" class="text-blue-500 hover:underline mr-2">Edit</button>
-                <button wire:click="delete({{ $guru->id }})" class="text-red-500 hover:underline">Hapus</button>
-            </td>
-        </tr>
     @endforeach
-</tbody>
+</div>
 
-    </table>
+
+
+   <table class="w-full bg-white dark:bg-gray-800 rounded shadow text-left">
+    <thead>
+        <tr class="border-b dark:border-gray-700">
+            <th class="px-3 py-2 border dark:border-gray-600">No.</th>
+            <th class="p-3">Kelas</th>
+            <th class="p-3">Nama Guru</th>
+            <th class="p-3">NIP</th>
+            <th class="p-3">Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($kelasList as $index => $kelas)
+            <tr class="border-b dark:border-gray-700 align-top">
+                <td class="px-3 py-2 border dark:border-gray-600">{{ $index + 1 }}</td>
+                <td class="p-3 font-bold">{{ $kelas->nama }}</td>
+                
+                <td class="p-3">
+                    @forelse($kelas->guru as $guru)
+                        <div>{{ $guru->nama }}</div>
+                    @empty
+                        <div>-</div>
+                    @endforelse
+                </td>
+
+                <td class="p-3">
+                    @forelse($kelas->guru as $guru)
+                        <div>{{ $guru->nip }}</div>
+                    @empty
+                        <div>-</div>
+                    @endforelse
+                </td>
+
+                <td class="p-3">
+                    @forelse($kelas->guru as $guru)
+                        <div class="flex gap-1 mb-1">
+                            <button wire:click="edit({{ $guru->id }})"
+                                    class="text-blue-500 hover:underline">Edit</button>
+                            <button wire:click="delete({{ $guru->id }})"
+                                    class="text-red-500 hover:underline">Hapus</button>
+                        </div>
+                    @empty
+                        <div>-</div>
+                    @endforelse
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="4" class="p-3 text-center">Tidak ada data ditemukan</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
+
 </div>

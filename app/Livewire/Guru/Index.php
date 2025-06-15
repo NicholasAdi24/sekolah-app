@@ -19,18 +19,13 @@ class Index extends Component
 
 public function render()
 {
-    $kelasList = Kelas::all();
-
-    $query = Guru::with('kelas');
-    
-    if ($this->filterKelasId) {
-        $query->whereHas('kelas', function ($q) {
-            $q->where('kelas.id', $this->filterKelasId);
-        });
-    }
+    $kelasList = Kelas::with(['guru'])
+        ->when($this->filterKelasId, function ($q) {
+            $q->where('id', $this->filterKelasId);
+        })
+        ->get();
 
     return view('livewire.guru.index', [
-        'gurus' => $query->get(),
         'kelasList' => $kelasList,
     ]);
 }
