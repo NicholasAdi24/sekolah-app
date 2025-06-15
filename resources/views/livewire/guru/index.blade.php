@@ -16,8 +16,8 @@
 
         <div class="mb-3">
             <label>Kelas</label>
-            <select wire:model="kelas_id" class="w-full rounded p-2 bg-gray-100 dark:bg-gray-700">
-                <option value="">Pilih Kelas</option>
+            <select wire:model="kelas_id" multiple class="w-full rounded p-2 bg-gray-100 dark:bg-gray-700">
+                <option disabled>Pilih Kelas</option>
                 @foreach ($kelasList as $kelas)
                     <option value="{{ $kelas->id }}">{{ $kelas->nama }}</option>
                 @endforeach
@@ -62,7 +62,14 @@
         <tr class="border-b dark:border-gray-700">
             <td class="p-3">{{ $guru->nama }}</td>
             <td class="p-3">{{ $guru->nip }}</td>
-            <td class="p-3">{{ $guru->kelas->nama ?? '-' }}</td>
+            <td class="p-3">
+                @if ($guru->kelas->count())
+                    {{ $guru->kelas->pluck('nama')->join(', ') }}
+                @else
+                    -
+                @endif
+            </td>
+
             <td class="p-3">
                 <button wire:click="edit({{ $guru->id }})" class="text-blue-500 hover:underline mr-2">Edit</button>
                 <button wire:click="delete({{ $guru->id }})" class="text-red-500 hover:underline">Hapus</button>

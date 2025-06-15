@@ -11,69 +11,81 @@ use Livewire\Attributes\Layout;
 #[Layout('layouts.admin')]
 class Index extends Component
 {
-    public $nama, $nip, $kelas_id, $guru_id;
+    public $nama, $nip, $guru_id;
     public $isEdit = false;
     public $filterKelasId = null; // properti filter
+    public $kelas_id = [];
 
-    public function render()
-    {
-        $kelasList = Kelas::all();
 
-        $query = Guru::with('kelas');
-        if ($this->filterKelasId) {
-            $query->where('kelas_id', $this->filterKelasId);
-        }
+public function render()
+{
+    $kelasList = Kelas::all();
 
-        return view('livewire.guru.index', [
-            'gurus' => $query->get(),
-            'kelasList' => $kelasList,
-        ]);
+    $query = Guru::with('kelas');
+    
+    if ($this->filterKelasId) {
+        $query->whereHas('kelas', function ($q) {
+            $q->where('kelas.id', $this->filterKelasId);
+        });
     }
+
+    return view('livewire.guru.index', [
+        'gurus' => $query->get(),
+        'kelasList' => $kelasList,
+    ]);
+}
+
 
     public function store()
-    {
-        $this->validate([
-            'nama' => 'required',
-            'nip' => 'required|unique:gurus,nip',
-            'kelas_id' => 'required|exists:kelas,id',
-        ]);
+{
+    $this->validate([
+        'nama' => 'required',
+        'nip' => 'required|unique:gurus,nip',
+        'kelas_id' => 'required|array|min:1',
+        'kelas_id.*' => 'exists:kelas,id'
+    ]);
 
-        Guru::create([
-            'nama' => $this->nama,
-            'nip' => $this->nip,
-            'kelas_id' => $this->kelas_id,
-        ]);
+    $guru = Guru::create([
+        'nama' => $this->nama,
+        'nip' => $this->nip,
+    ]);
 
-        $this->resetForm();
-    }
+    $guru->kelas()->sync($this->kelas_id);
 
-    public function edit($id)
-    {
-        $guru = Guru::findOrFail($id);
-        $this->guru_id = $guru->id;
-        $this->nama = $guru->nama;
-        $this->nip = $guru->nip;
-        $this->kelas_id = $guru->kelas_id;
-        $this->isEdit = true;
-    }
+    $this->resetForm();
+}
 
-    public function update()
-    {
-        $this->validate([
-            'nama' => 'required',
-            'nip' => 'required|unique:gurus,nip,' . $this->guru_id,
-            'kelas_id' => 'required|exists:kelas,id',
-        ]);
 
-        $guru = Guru::findOrFail($this->guru_id);
-        $guru->update([
-            'nama' => $this->nama,
-            'nip' => $this->nip,
-            'kelas_id' => $this->kelas_id,
-        ]);
+public function edit($id)
+{
+    $guru = Guru::with('kelas')->findOrFail($id);
+    $this->guru_id = $guru->id;
+    $this->nama = $guru->nama;
+    $this->nip = $guru->nip;
+    $this->kelas_id = $guru->kelas->pluck('id')->toArray();
+    $this->isEdit = true;
+}
 
-        $this->resetForm();
-    }
+
+   public function update()
+{
+    $this->validate([
+        'nama' => 'required',
+        'nip' => 'required|unique:gurus,nip,' . $this->guru_id,
+        'kelas_id' => 'required|array|min:1',
+        'kelas_id.*' => 'exists:kelas,id'
+    ]);
+
+    $guru = Guru::findOrFail($this->guru_id);
+    $guru->update([
+        'nama' => $this->nama,
+        'nip' => $this->nip,
+    ]);
+
+    $guru->kelas()->sync($this->kelas_id);
+
+    $this->resetForm();
+}
 
     public function delete($id)
     {
@@ -84,7 +96,7 @@ class Index extends Component
     {
         $this->nama = '';
         $this->nip = '';
-        $this->kelas_id = '';
+        $this->kelas_id = [];
         $this->guru_id = null;
         $this->isEdit = false;
     }

@@ -12,8 +12,10 @@ class Guru extends Model
     protected $fillable = ['nama', 'nip', 'kelas_id'];
 
     // Relasi: Guru mengajar banyak kelas
-    public function kelas()
-    {
-        return $this->belongsTo(Kelas::class);
-    }
+public function kelas()
+{
+    return $this->belongsToMany(\App\Models\Kelas::class, 'kelas_guru');
+}
+
+
 }

@@ -18,15 +18,20 @@ class Kelas extends Model
         return $this->hasMany(Siswa::class);
     }
 
-    // Relasi: 1 kelas bisa punya banyak guru (many-to-many)
-    public function guru()
-    {
-        return $this->belongsToMany(Guru::class, 'kelas_guru');
-    }
+public function guru()
+{
+    return $this->belongsToMany(\App\Models\Guru::class, 'kelas_guru');
+}
 
     public function siswas()
 {
     return $this->hasMany(Siswa::class);
 }
+
+public function gurus()
+{
+    return $this->belongsToMany(\App\Models\Guru::class, 'kelas_guru');
+}
+
 
 }
