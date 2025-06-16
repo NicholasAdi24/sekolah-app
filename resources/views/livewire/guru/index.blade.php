@@ -54,7 +54,7 @@
    <table class="w-full bg-white dark:bg-gray-800 rounded shadow text-left">
     <thead>
         <tr class="border-b dark:border-gray-700">
-            <th class="px-3 py-2 border dark:border-gray-600">No.</th>
+            <th class="px-3 py-2 ">No.</th>
             <th class="p-3">Kelas</th>
             <th class="p-3">Nama Guru</th>
             <th class="p-3">NIP</th>
@@ -64,7 +64,7 @@
     <tbody>
         @forelse($kelasList as $index => $kelas)
             <tr class="border-b dark:border-gray-700 align-top">
-                <td class="px-3 py-2 border dark:border-gray-600">{{ $index + 1 }}</td>
+                <td class="px-3 py-2">{{ $index + 1 }}</td>
                 <td class="p-3 font-bold">{{ $kelas->nama }}</td>
                 
                 <td class="p-3">
