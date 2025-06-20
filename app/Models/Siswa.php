@@ -16,4 +16,11 @@ class Siswa extends Model
     {
         return $this->belongsTo(Kelas::class);
     }
+
+public function orangtuaDirect()
+{
+    return $this->hasOne(\App\Models\OrangTua::class, 'siswa_id', 'id');
+}
+
+
 }

@@ -2,28 +2,33 @@
 
 namespace App\Livewire\Siswa;
 
+
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\OrangTua;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.admin')]
 class Index extends Component
 {
-    public $nama, $nis, $kelas_id, $siswa_id;
+    public $nama, $nis, $kelas_id, $siswa_id ;
     public $isEdit = false;
     public $filterKelasId = null;
 
 public function render()
 {
-    $kelasList = Kelas::with(['siswas'])
-        ->when($this->filterKelasId, function ($query) {
-            $query->where('id', $this->filterKelasId);
-        })
-        ->get();
+    $kelasList = Kelas::with(['siswas' => function($query) {
+        $query->with(['orangtuaDirect']);
+    }])
+    ->when($this->filterKelasId, function ($query) {
+        $query->where('id', $this->filterKelasId);
+    })
+    ->get();
 
     return view('livewire.siswa.index', compact('kelasList'));
 }
+
 
 
     public function store()
@@ -31,13 +36,14 @@ public function render()
         $this->validate([
             'nama' => 'required',
             'nis' => 'required|unique:siswas,nis',
-            'kelas_id' => 'required|exists:kelas,id',
+            'kelas_id' => 'required|exists:kelas,id'
         ]);
 
         Siswa::create([
             'nama' => $this->nama,
             'nis' => $this->nis,
             'kelas_id' => $this->kelas_id,
+
         ]);
 
         $this->resetForm();

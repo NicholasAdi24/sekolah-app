@@ -25,6 +25,7 @@
             @error('kelas_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
 
+
         <div class="flex gap-2">
             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                 {{ $isEdit ? 'Update' : 'Simpan' }}
@@ -60,6 +61,7 @@
             <th class="p-3">Kelas</th>
             <th class="p-3">Nama Siswa</th>
             <th class="p-3">NIS</th>
+            <th class="p-3">Nama Orang Tua</th>
             <th class="p-3">Aksi</th>
         </tr>
     </thead>
@@ -80,6 +82,13 @@
                 <td class="p-3">
                     @forelse ($kelas->siswas as $siswa)
                         <div>{{ $siswa->nis }}</div>
+                    @empty
+                        <div>-</div>
+                    @endforelse
+                </td>
+                <td class="p-3">
+                    @forelse ($kelas->siswas as $siswa)
+                       <div>{{ $siswa->orangtuaDirect->nama ?? '-' }}</div>
                     @empty
                         <div>-</div>
                     @endforelse

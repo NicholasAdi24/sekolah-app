@@ -21,6 +21,9 @@
                 <a href="{{ route('data-keseluruhan') }}" class="block px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('data-keseluruhan') ? 'bg-gray-700' : '' }}">
                     📋 Data Keseluruhan
                 </a>
+                                <a href="{{ route('orang-tua.index') }}" class="block px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('orang-tua.index') ? 'bg-gray-700' : '' }}">
+                    🧓 Data Orang Tua
+                </a>
             </nav>
         </aside>
 
